@@ -6,9 +6,9 @@
 [![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black)](https://ollama.com/)
  
 
-**CounselorAI** is a local, privacy-focused Retrieval-Augmented Generation (RAG) agent designed to assist USC Electrical Engineering (MSEE) students. It answers questions regarding degree requirements, course planning, and academic policies by strictly grounding responses in official university documentation (handbooks, catalogues).
+**CounselorAI** is a local, privacy-focused Retrieval-Augmented Generation (RAG) agent intially designed to assist USC Electrical Engineering (MSEE) students. It answers questions regarding degree requirements, course planning, and academic policies by strictly grounding responses in official university documentation.
 
-> **Note:** This project runs 100% locally. No data is sent to external APIs (OpenAI/Anthropic), ensuring student privacy and zero inference costs.
+> **Note:** At the current stage this project runs 100% locally. No data is sent to external APIs (OpenAI/Anthropic), ensuring student privacy and zero inference costs.
 
 ---
 
