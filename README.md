@@ -5,6 +5,15 @@
 [![LlamaIndex](https://img.shields.io/badge/LlamaIndex-RAG-orange)](https://www.llamaindex.ai/)
 [![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black)](https://ollama.com/)
 
+## Roadmap
+
+* [1] **Initial proof of concept:** Creating a Local Retrieval-Augmented Generation (RAG) agent pipeline where the flow of **Ingestion**, **Storage:**, **Retrieval:**  and **Synthesis:** is followed and displayed on a basic UI. Accuracy in this stage in **NOT** a concern only that the pipeline behaves as expected.
+* [ ] **Supply Refined Data:** For the best results we must provide as much relevant data in the initial stage of the RAG pipeline, this will improve usability and relevance to users significantly more than any post data accuracy improvements.
+* [ ] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
+* [ ] **Accuracy:** Setting a low temperature(less creative, more encyclopedic knowledge), prompt engineering and other strategies can be implemented to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
+* [ ] **Hybrid Search:** Implement keyword search alongside vector search for better acronym recognition (e.g., "EE 483").
+* [ ] **Citations:** Update UI to display the specific page number of the source PDF used for the answer.  
+
 **CounselorAI** is a local, privacy-focused Retrieval-Augmented Generation (RAG) agent designed to assist USC Electrical Engineering (MSEE) students. It answers questions regarding degree requirements, course planning, and academic policies by strictly grounding responses in official university documentation (handbooks, catalogues).
 
 > **Note:** This project runs 100% locally. No data is sent to external APIs (OpenAI/Anthropic), ensuring student privacy and zero inference costs.
@@ -82,9 +91,3 @@ python src/ingestion.py
 ```bash
 streamlit run src/app.py
 ```
-
-## Roadmap
-
-* [ ] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
-* [ ] **Hybrid Search:** Implement keyword search alongside vector search for better acronym recognition (e.g., "EE 483").
-* [ ] **Citations:** Update UI to display the specific page number of the source PDF used for the answer.  
