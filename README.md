@@ -7,7 +7,7 @@
 
 ## Roadmap
 
-* [1] **Initial proof of concept:** Creating a Local Retrieval-Augmented Generation (RAG) agent pipeline where the flow of **Ingestion**, **Storage:**, **Retrieval:**  and **Synthesis:** is followed and displayed on a basic UI. Accuracy in this stage in **NOT** a concern only that the pipeline behaves as expected.
+* [x] **Initial proof of concept:** Creating a Local Retrieval-Augmented Generation (RAG) agent pipeline where the flow of **Ingestion**, **Storage:**, **Retrieval:**  and **Synthesis:** is followed and displayed on a basic UI. Accuracy in this stage in **NOT** a concern only that the pipeline behaves as expected.
 * [ ] **Supply Refined Data:** For the best results we must provide as much relevant data in the initial stage of the RAG pipeline, this will improve usability and relevance to users significantly more than any post data accuracy improvements.
 * [ ] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
 * [ ] **Accuracy:** Setting a low temperature(less creative, more encyclopedic knowledge), prompt engineering and other strategies can be implemented to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
