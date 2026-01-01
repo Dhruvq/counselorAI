@@ -5,11 +5,16 @@
 __pycache__/
 *.py[cod]
 *.class
+chroma_db/
+data/
+.venv/
 venv/
 .env
+__pycache__/
 
 # Docker
 docker-compose.override.yml
 
 # IDE
 .vscode/
+
