@@ -41,7 +41,7 @@ counselorAI/
 └── README.md                # Documentation
 ```
 
-## ⚡ Quick Start
+## Quick Start
 
 ### Prerequisites
 * **Python 3.10+**
