@@ -19,13 +19,13 @@ if "chat_engine" not in st.session_state:
     with st.status("Initializing System...", expanded=True) as status:
         try:
             # Step 1: Load the Engine (Vector DB + Index)
-            st.write("📂 Loading Knowledge Base...")
+            st.write("Loading Knowledge Base...")
             chat_engine = get_chat_engine()
             
             # Step 2: Warm Up / Preload
             # We send a dummy message to force the heavy LLM to load into RAM now
             # instead of waiting for the user's first input.
-            st.write("🔥 Warming up AI Model (this prevents timeouts)...")
+            st.write("Warming up AI Model (this prevents timeouts)...")
             chat_engine.chat("Just say hello.") 
             
             # Step 3: Save to session state
