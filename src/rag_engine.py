@@ -29,7 +29,7 @@ def load_index():
     Settings.llm = Ollama(
         model=LLM_MODEL, 
         base_url=ollama_url,
-        request_timeout=120.0,
+        request_timeout=300.0,
         temperature=0.1 # Low temperature = more factual/less creative
     )
 
