@@ -90,7 +90,7 @@ streamlit run src/app.py
 
 * [x] **Add a 'preload' step:** By sending a dummy request to the model before actually letting the user make a request, it give the model time to load into the computer's RAM leading to less timeouts and a smoother user experience.
 
-* [x] **Supply initial Refined Data:** This smaller batch of data will help test the system to ensure usability and relevance to users in a more confined manner before expanding to more comprehensive data.
+* [x] **Supply initial refined data:** This smaller batch of data will help test the system to ensure usability and relevance to users in a more confined manner before expanding to more comprehensive data.
 
 * [ ] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
 
