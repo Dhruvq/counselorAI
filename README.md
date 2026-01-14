@@ -41,6 +41,8 @@ counselorAI/
 ├── docker-compose.yaml      # Container orchestration (In Progress)
 └── README.md                # Documentation
 ```
+## Docker Config
+### Increase RAM limit to 8 gb
 
 ## Quick Start
 

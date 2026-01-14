@@ -30,7 +30,9 @@ def load_index():
         model=LLM_MODEL, 
         base_url=ollama_url,
         request_timeout=600.0,
-        temperature=0.1 # Low temperature = more factual/less creative
+        temperature=0.1, # Low temperature = more factual/less creative
+        context_window=8192,
+        additional_kwargs={"num_ctx": 8192}
     )
 
     # 3. Connect to ChromaDB
@@ -65,5 +67,6 @@ def get_chat_engine():
     return index.as_chat_engine(
         chat_mode="context", 
         system_prompt=custom_prompt,
+        similarity_top_k=5, # Fetch more context since we have 8k window
         verbose=True
     )
