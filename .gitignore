@@ -6,7 +6,6 @@ __pycache__/
 *.py[cod]
 *.class
 chroma_db/
-data/
 .venv/
 venv/
 .env
