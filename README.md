@@ -32,7 +32,7 @@ The system follows a standard RAG pipeline architecture:
 
 ```text
 counselorAI/
-├── data/                    # (Ignored by Git) Place USC PDF handbooks here
+├── data/                    # USC PDF handbooks here(More need to be added)
 ├── src/
 │   ├── app.py               # Streamlit Frontend UI
 │   ├── ingestion.py         # ETL Pipeline: Reads PDFs -> Updates Vector DB
@@ -71,7 +71,7 @@ ollama pull llama3.2
 ```
 
 ### 3. Ingest Data
-Place your official USC PDF documents (e.g., *Viterbi Graduate Handbook.pdf*) into the `data/` folder. Then run the ingestion pipeline:
+Add any additional relevant PDF documents(that you would trust as a source of information) into the `data/` folder(.pdf files only). Then run the ingestion pipeline:
 
 ```bash
 python src/ingestion.py
@@ -90,11 +90,15 @@ streamlit run src/app.py
 
 * [x] **Add a 'preload' step:** By sending a dummy request to the model before actually letting the user make a request, it give the model time to load into the computer's RAM leading to less timeouts and a smoother user experience.
 
-* [ ] **Supply Refined Data:** For the best results we must provide as much relevant data in the initial stage of the RAG pipeline, this will improve usability and relevance to users significantly more than any post data accuracy improvements.
+* [x] **Supply initial Refined Data:** This smaller batch of data will help test the system to ensure usability and relevance to users in a more confined manner before expanding to more comprehensive data.
 
 * [ ] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
 
-* [ ] **Accuracy:** Setting a low temperature(less creative, more encyclopedic knowledge), prompt engineering and other strategies can be implemented to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
+* [ ] **Accuracy calibration:** Setting a low temperature(less creative, more encyclopedic knowledge), prompt engineering and other strategies can be implemented to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
+
+* [ ] **Add more relevant Data:** For the best results we must provide as much relevant data in the initial stage of the RAG pipeline, this will help the system be as useful as possible to MSEE students and increase the chances that a potential question can be answer without the user having themselves having to add sources of data.
+
+* [ ] **Improve accuracy on the larger data set:** Ensure that the larger dataset does not mess with the model's ability to retrive relevant information. Further, more advanced techniques(eg. adding a Re-ranking step which would use a Cross-Encoder to rank the revelant sources of information and only passing the top-k to the LLM) can be used to try and improve the model's accuracy. This needs to be done while keeping in mind that the systems is designed to run on a local machine, which caps how compute hungry the techniques can be.
 
 * [ ] **Hybrid Search:** Implement keyword search alongside vector search for better acronym recognition (e.g., "EE 483").
 
