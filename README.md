@@ -41,14 +41,22 @@ counselorAI/
 ├── docker-compose.yaml      # Container orchestration (In Progress)
 └── README.md                # Documentation
 ```
-## Docker Config
-### Increase RAM limit to 8 gb
 
 ## Quick Start
 
 ### Prerequisites
-* **Python 3.10+**
+* **Python 3.12+**
 * **[Ollama](https://ollama.com/)** (Required for local inference)
+
+## Docker Config(Recommended)
+* Download Docker
+* Increase RAM limit to 8 gb
+```bash 
+git clone [https://github.com/Dhruvq/counselorAI.git](https://github.com/Dhruvq/counselorAI.git)
+cd counselorAI
+docker-compose up --build
+```
+* Voila! You should be able to chat with your private, personal counselor! 
 
 ### 1. Installation
 Clone the repository and set up the environment:
