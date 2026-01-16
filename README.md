@@ -49,7 +49,7 @@ counselorAI/
 * **[Ollama](https://ollama.com/)** (Required for local inference)
 
 ## Option 1: Docker Config (Recommended)
-* Download Docker
+* Download [Docker](https://www.docker.com/)
 * Increase RAM limit to 8 gb
 ```bash 
 git clone [https://github.com/Dhruvq/counselorAI.git](https://github.com/Dhruvq/counselorAI.git)
