@@ -48,7 +48,7 @@ counselorAI/
 * **Python 3.12+**
 * **[Ollama](https://ollama.com/)** (Required for local inference)
 
-## Docker Config(Recommended)
+## Option 1: Docker Config (Recommended)
 * Download Docker
 * Increase RAM limit to 8 gb
 ```bash 
@@ -56,7 +56,9 @@ git clone [https://github.com/Dhruvq/counselorAI.git](https://github.com/Dhruvq/
 cd counselorAI
 docker-compose up --build
 ```
-* Voila! You should be able to chat with your private, personal counselor! 
+* Voila! You should be able to chat with your private, personal counselor!
+
+## Option 2: Legacy Virtual Environment Config
 
 ### 1. Installation
 Clone the repository and set up the environment:
@@ -102,7 +104,7 @@ streamlit run src/app.py
 
 * [x] **Supply initial refined data:** This smaller batch of data will help test the system to ensure usability and relevance to users in a more confined manner before expanding to more comprehensive data.
 
-* [ ] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
+* [x] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
 
 * [ ] **Accuracy calibration:** Setting a low temperature(less creative, more encyclopedic knowledge), prompt engineering and other strategies can be implemented to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
 
