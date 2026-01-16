@@ -1,4 +1,5 @@
 import os
+import requests
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageContext, Settings
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
@@ -26,6 +27,18 @@ def load_index():
     # We use an env var for the URL so it works both locally and in Docker
     ollama_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     
+    # Auto-pull model if it doesn't exist
+    try:
+        tags_response = requests.get(f"{ollama_url}/api/tags")
+        if tags_response.status_code == 200:
+            existing_models = [m['name'] for m in tags_response.json().get('models', [])]
+            if not any(LLM_MODEL in m for m in existing_models):
+                print(f"Model '{LLM_MODEL}' not found. Pulling... (This may take a few minutes)")
+                requests.post(f"{ollama_url}/api/pull", json={"name": LLM_MODEL, "stream": False})
+                print(f"Model '{LLM_MODEL}' pulled successfully.")
+    except Exception as e:
+        print(f"Warning: Could not verify/pull Ollama model: {e}")
+
     Settings.llm = Ollama(
         model=LLM_MODEL, 
         base_url=ollama_url,
