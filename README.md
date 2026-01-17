@@ -52,7 +52,7 @@ counselorAI/
 * Download [Docker](https://www.docker.com/)
 * Increase RAM limit to 8 gb
 ```bash 
-git clone [https://github.com/Dhruvq/counselorAI.git](https://github.com/Dhruvq/counselorAI.git)
+git clone https://github.com/Dhruvq/counselorAI.git
 cd counselorAI
 docker-compose up --build
 ```
@@ -64,7 +64,7 @@ docker-compose up --build
 Clone the repository and set up the environment:
 
 ```bash
-git clone [https://github.com/Dhruvq/counselorAI.git](https://github.com/Dhruvq/counselorAI.git)
+git clone https://github.com/Dhruvq/counselorAI.git
 cd counselorAI
 
 # Create virtual environment
