@@ -37,8 +37,9 @@ counselorAI/
 │   ├── app.py               # Streamlit Frontend UI
 │   ├── ingestion.py         # ETL Pipeline: Reads PDFs -> Updates Vector DB
 │   └── rag_engine.py        # Core Logic: Initialization of LlamaIndex & Ollama
-├── requirements.txt         # Python dependencies
+├── requirements.txt         # Python dependencies             
 ├── docker-compose.yaml      # Container orchestration (In Progress)
+├── Dockerfile  
 └── README.md                # Documentation
 ```
 
