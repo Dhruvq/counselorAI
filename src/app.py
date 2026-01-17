@@ -4,13 +4,13 @@ from rag_engine import get_chat_engine
 
 # Page Config
 st.set_page_config(
-    page_title="USC MSEE Counselor AI",
+    page_title="USC Counselor AI",
     page_icon="🎓",
     layout="centered"
 )
 
 # Header
-st.title("🎓 USC MSEE Student Helper")
+st.title("🎓 USC MS ECE Student Helper")
 st.markdown("Ask questions about policies, courses, and degree requirements. Answers are based *only* on official documents.")
 
 # Initialize Chat Engine in Session State (with Preloading)
@@ -40,7 +40,7 @@ if "chat_engine" not in st.session_state:
 
 # Initialize Chat History
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Hello! I can help you with USC MSEE requirements. What would you like to know?"}]
+    st.session_state.messages = [{"role": "assistant", "content": "Hello! I can help you with USC requirements. What would you like to know?"}]
 
 # Display Chat History
 for message in st.session_state.messages:
@@ -48,7 +48,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # User Input
-if prompt := st.chat_input("Ask a question (e.g., 'What are the core requirements?')"):
+if prompt := st.chat_input("Ask a question (e.g., 'How many units do I need to graduate as a MSEE student?')"):
     # 1. Add user message to history
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
