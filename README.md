@@ -50,16 +50,23 @@ counselorAI/
 * **[Ollama](https://ollama.com/)** (Required for local inference)
 
 ## Option 1: Docker Config (Recommended)
-* Download [Docker](https://www.docker.com/)
-* Increase RAM limit to 8 gb
+### 1. Setup Docker
+* **Download:** Install [Docker Desktop](https://www.docker.com/) and sign in to your account.
+* **Configure Resources:** To ensure the AI performs optimally, increase your memory allocation:
+    1. Open Docker **Settings**.
+    2. Navigate to **Resources** → **Advanced** → **Resource Allocation**.
+    3. Set the **Memory Limit** to **8 GB**.
+
+### 2. Launch the Application
+Run the following commands in your terminal to clone the repository and build the container:
 ```bash 
 git clone https://github.com/Dhruvq/counselorAI.git
 cd counselorAI
 docker-compose up --build
 ```
-* Voila! You should be able to chat with your private, personal counselor!
+*Voila! You should be able to chat with your private, personal counselor!*
 
-## Option 2: Legacy Virtual Environment Config
+## Option 2: Virtual Environment Config(Legacy)
 
 ### 1. Installation
 Clone the repository and set up the environment:
