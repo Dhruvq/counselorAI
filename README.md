@@ -37,22 +37,43 @@ counselorAI/
 │   ├── app.py               # Streamlit Frontend UI
 │   ├── ingestion.py         # ETL Pipeline: Reads PDFs -> Updates Vector DB
 │   └── rag_engine.py        # Core Logic: Initialization of LlamaIndex & Ollama
-├── requirements.txt         # Python dependencies
+├── requirements.txt         # Python dependencies             
 ├── docker-compose.yaml      # Container orchestration (In Progress)
+├── Dockerfile  
 └── README.md                # Documentation
 ```
 
 ## Quick Start
 
 ### Prerequisites
-* **Python 3.10+**
+* **Python 3.12+**
 * **[Ollama](https://ollama.com/)** (Required for local inference)
+
+## Option 1: Docker Config (Recommended)
+> **Note:** If you wish to add additional pdf files for the model to use as trusted sources of information, skip to **Option 2** since the ingestion pipeline will need to be rerun.
+### 1. Setup Docker
+* **Download:** Install [Docker Desktop](https://www.docker.com/) and sign in to your account.
+* **Configure Resources:** To ensure the AI performs optimally, increase your memory allocation:
+    1. Open Docker **Settings**.
+    2. Navigate to **Resources** → **Advanced** → **Resource Allocation**.
+    3. Set the **Memory Limit** to **8 GB**.
+
+### 2. Launch the Application
+Run the following commands in your terminal to clone the repository and build the container:
+```bash 
+git clone https://github.com/Dhruvq/counselorAI.git
+cd counselorAI
+docker-compose up --build
+```
+*Voila! You should be able to chat with your private, personal counselor!*
+
+## Option 2: Virtual Environment Config(Legacy)
 
 ### 1. Installation
 Clone the repository and set up the environment:
 
 ```bash
-git clone [https://github.com/Dhruvq/counselorAI.git](https://github.com/Dhruvq/counselorAI.git)
+git clone https://github.com/Dhruvq/counselorAI.git
 cd counselorAI
 
 # Create virtual environment
@@ -90,9 +111,9 @@ streamlit run src/app.py
 
 * [x] **Add a 'preload' step:** By sending a dummy request to the model before actually letting the user make a request, it give the model time to load into the computer's RAM leading to less timeouts and a smoother user experience.
 
-* [x] **Supply initial Refined Data:** This smaller batch of data will help test the system to ensure usability and relevance to users in a more confined manner before expanding to more comprehensive data.
+* [x] **Supply initial refined data:** This smaller batch of data will help test the system to ensure usability and relevance to users in a more confined manner before expanding to more comprehensive data.
 
-* [ ] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
+* [x] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
 
 * [ ] **Accuracy calibration:** Setting a low temperature(less creative, more encyclopedic knowledge), prompt engineering and other strategies can be implemented to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
 

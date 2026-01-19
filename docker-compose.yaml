@@ -1,0 +1,34 @@
+services:
+  # Service 1: The LLM Provider
+  ollama:
+    container_name: counselor_ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_storage:/root/.ollama
+    # Uncomment below to enable GPU support (requires NVIDIA Container Toolkit)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Service 2: Your RAG Application
+  counselor-ai:
+    container_name: counselor_app
+    build: .
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      - ./chroma_db:/app/chroma_db  # Persist vector DB
+      - ./src:/app/src              # Optional: Hot-reload code changes
+    ports:
+      - "8501:8501"                 # Expose app port (e.g., Streamlit default)
+
+volumes:
+  ollama_storage:
