@@ -115,7 +115,7 @@ streamlit run src/app.py
 
 * [x] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
 
-* [ ] **Accuracy calibration:** Setting a low temperature(less creative, more encyclopedic knowledge), prompt engineering and other strategies can be implemented to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
+* [x] **Accuracy calibration:** Setting a low temperature(less creative, more encyclopedic knowledge), prompt engineering and other strategies can be implemented to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
 
 * [ ] **Add more relevant Data:** For the best results we must provide as much relevant data in the initial stage of the RAG pipeline, this will help the system be as useful as possible to MSEE students and increase the chances that a potential question can be answer without the user having themselves having to add sources of data.
 

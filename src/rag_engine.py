@@ -4,6 +4,7 @@ from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageCon
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
+from llama_index.core.postprocessor import SentenceTransformerRerank
 import chromadb
 
 # Configuration
@@ -71,15 +72,24 @@ def get_chat_engine():
     custom_prompt = (
         "You are an academic advisor for the USC MSEE program. "
         "Your goal is to answer questions strictly based on the provided context. "
+        "If the user's question is vague, ambiguous, or could refer to multiple topics found in the context, "
+        "ask a clarifying question to better understand their intent instead of guessing. "
         "If the answer is not explicitly in the context, state: "
         "'I cannot find this information in the official documents. Please consult an academic advisor.' "
         "Do not make up policies or courses. "
         "Keep answers professional and concise."
     )
     
+    # Re-ranker: Re-scores top 15 retrieved nodes to find the best 5
+    reranker = SentenceTransformerRerank(
+        model="cross-encoder/ms-marco-MiniLM-L-6-v2", 
+        top_n=5
+    )
+
     return index.as_chat_engine(
         chat_mode="context", 
         system_prompt=custom_prompt,
-        similarity_top_k=5, # Fetch more context since we have 8k window
+        similarity_top_k=15, # Fetch a wider pool of documents first
+        node_postprocessors=[reranker], # Filter them down to the best 5
         verbose=True
     )
