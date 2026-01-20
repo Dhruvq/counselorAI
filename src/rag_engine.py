@@ -72,24 +72,26 @@ def get_chat_engine():
     custom_prompt = (
         "You are an academic advisor for the USC MSEE program. "
         "Your goal is to answer questions strictly based on the provided context. "
+        "Check all provided context snippets for relevant details before answering. "
         "If the user's question is vague, ambiguous, or could refer to multiple topics found in the context, "
         "ask a clarifying question to better understand their intent instead of guessing. "
+        "If you find conflicting information in the context, mention both and ask for clarification. "
         "If the answer is not explicitly in the context, state: "
         "'I cannot find this information in the official documents. Please consult an academic advisor.' "
         "Do not make up policies or courses. "
         "Keep answers professional and concise."
     )
     
-    # Re-ranker: Re-scores top 15 retrieved nodes to find the best 5
+    # Re-ranker: Re-scores top 30 retrieved nodes to find the best 7
     reranker = SentenceTransformerRerank(
         model="cross-encoder/ms-marco-MiniLM-L-6-v2", 
-        top_n=5
+        top_n=7
     )
 
     return index.as_chat_engine(
         chat_mode="context", 
         system_prompt=custom_prompt,
-        similarity_top_k=15, # Fetch a wider pool of documents first
-        node_postprocessors=[reranker], # Filter them down to the best 5
+        similarity_top_k=30, # Fetch a much wider pool to improve recall on larger datasets
+        node_postprocessors=[reranker], # Filter them down to the best 7
         verbose=True
     )
