@@ -119,7 +119,7 @@ streamlit run src/app.py
 
 * [x] **Add more relevant Data:** For the best results we must provide as much relevant data in the initial stage of the RAG pipeline, this will help the system be as useful as possible to MSEE students and increase the chances that a potential question can be answer without the user having themselves having to add sources of data.
 
-* [ ] **Improve accuracy on the larger data set:** Ensure that the larger dataset does not mess with the model's ability to retrive relevant information. Further, more advanced techniques(eg. adding a Re-ranking step which would use a Cross-Encoder to rank the revelant sources of information and only passing the top-k to the LLM) can be used to try and improve the model's accuracy. This needs to be done while keeping in mind that the systems is designed to run on a local machine, which caps how compute hungry the techniques can be.
+* [x] **Improve accuracy on the larger data set:** Ensure that the larger dataset does not mess with the model's ability to retrive relevant information. Further, more advanced techniques(eg. adding a Re-ranking step which would use a Cross-Encoder to rank the revelant sources of information and only passing the top-k to the LLM) can be used to try and improve the model's accuracy. This needs to be done while keeping in mind that the systems is designed to run on a local machine, which caps how compute hungry the techniques can be.
 
 * [ ] **Hybrid Search:** Implement keyword search alongside vector search for better acronym recognition (e.g., "EE 483").
 
