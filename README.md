@@ -129,4 +129,4 @@ streamlit run src/app.py
 
 * [x] **Citations:** Update UI to display the specific page number of the source PDF used for the answer. 
 
-* [ ] **Final end to end test:** Rerun the whole project top to bottom, check edge cases, get feedback from potential users and implement finishing touches in order to finalize the project.
+* [x] **Final end to end test:** Rerun the whole project top to bottom, check edge cases, get feedback from potential users and implement finishing touches in order to finalize the project.
