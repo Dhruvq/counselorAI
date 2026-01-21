@@ -50,7 +50,7 @@ counselorAI/
 * **[Ollama](https://ollama.com/)** (Required for local inference)
 
 ## Option 1: Docker Config (Recommended)
-> **Note:** If you wish to add additional pdf files for the model to use as trusted sources of information, skip to **Option 2** since the ingestion pipeline will need to be rerun.
+> **Note:** If you wish to add additional pdf files for the model to use as trusted sources of information, skip to **Option 2** to run the ingestion pipeline manually.
 ### 1. Setup Docker
 * **Download:** Install [Docker Desktop](https://www.docker.com/) and sign in to your account.
 * **Configure Resources:** To ensure the AI performs optimally, increase your memory allocation:
