@@ -13,6 +13,7 @@ import chromadb
 
 # Configuration
 CHROMA_DB_DIR = "./chroma_db"
+DATA_DIR = "./data"
 COLLECTION_NAME = "usc_msee_docs"
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 LLM_MODEL = "llama3.2"  
@@ -21,8 +22,6 @@ def load_index():
     """
     Loads the pre-built vector index from disk.
     """
-    if not os.path.exists(CHROMA_DB_DIR):
-        raise ValueError(f"Vector DB not found at {CHROMA_DB_DIR}. Run ingestion.py first.")
 
     # 1. Setup Embedding Model (Must match ingestion!)
     embed_model = HuggingFaceEmbedding(model_name=EMBEDDING_MODEL)
@@ -60,11 +59,21 @@ def load_index():
     
     # 4. Load Index
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
-    index = VectorStoreIndex.from_vector_store(
-        vector_store,
-        storage_context=storage_context,
+    
+    # Auto-build index if empty (Robustness fix for fresh deployments)
+    if chroma_collection.count() == 0:
+        print("Vector DB is empty. Attempting to ingest data from ./data...")
+        if os.path.exists(DATA_DIR):
+            documents = SimpleDirectoryReader(DATA_DIR).load_data()
+            if documents:
+                return VectorStoreIndex.from_documents(documents, storage_context=storage_context)
+        
+        # If we reach here, no data found
+        raise ValueError("Vector DB is empty and no data found in ./data.")
+        
+    return VectorStoreIndex.from_vector_store(
+        vector_store, storage_context=storage_context
     )
-    return index
 
 def get_chat_engine():
     """
