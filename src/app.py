@@ -12,6 +12,18 @@ st.set_page_config(
 st.title("🎓 USC MS ECE Student Helper")
 st.markdown("Ask questions about policies, courses, and degree requirements. Answers are based *only* on official documents.")
 
+# Sidebar Controls (For Testing & Diagnostics)
+with st.sidebar:
+    st.header("Controls")
+    if st.button("Reset Conversation"):
+        st.session_state.messages = [{"role": "assistant", "content": "Hello! I can help you with USC requirements. What would you like to know?"}]
+        if "chat_engine" in st.session_state:
+            st.session_state.chat_engine.reset()
+        st.rerun()
+    
+    st.divider()
+    st.caption("System Status: Ready 🟢")
+
 # Initialize Chat Engine in Session State (with Preloading)
 if "chat_engine" not in st.session_state:
     # Create a status container to show progress
