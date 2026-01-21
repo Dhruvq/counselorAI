@@ -95,7 +95,7 @@ def get_chat_engine():
         "Keep answers professional and concise."
     )
     
-    # Re-ranker: Re-scores top 30 retrieved nodes to find the best 7
+    # Re-ranker: Re-scores top 20 retrieved nodes to find the best 7
     reranker = SentenceTransformerRerank(
         model="cross-encoder/ms-marco-MiniLM-L-6-v2", 
         top_n=7
@@ -103,7 +103,7 @@ def get_chat_engine():
     
     # --- Hybrid Search Setup ---
     # 1. Create Vector Retriever
-    vector_retriever = index.as_retriever(similarity_top_k=30)
+    vector_retriever = index.as_retriever(similarity_top_k=20)
     
     # 2. Create BM25 (Keyword) Retriever
     # We fetch all documents from Chroma to build the keyword index in memory.
@@ -118,13 +118,13 @@ def get_chat_engine():
         for id, text, meta in zip(data['ids'], data['documents'], metadatas):
             nodes.append(TextNode(id_=id, text=text, metadata=meta))
             
-    bm25_retriever = BM25Retriever.from_defaults(nodes=nodes, similarity_top_k=30)
+    bm25_retriever = BM25Retriever.from_defaults(nodes=nodes, similarity_top_k=20)
     
     # 3. Fuse Retrievers (Hybrid)
     # Combines results from both Vector and Keyword search using Reciprocal Rank Fusion
     fusion_retriever = QueryFusionRetriever(
         [vector_retriever, bm25_retriever],
-        similarity_top_k=30, # Total candidates to pass to the re-ranker
+        similarity_top_k=20, # Total candidates to pass to the re-ranker
         num_queries=1,       # Use the original query (faster than generating variations)
         mode="reciprocal_rerank",
         use_async=False,
