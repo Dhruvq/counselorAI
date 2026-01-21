@@ -21,9 +21,6 @@ with st.sidebar:
         if "chat_engine" in st.session_state:
             st.session_state.chat_engine.reset()
         st.rerun()
-    
-    st.divider()
-    st.caption("System Status: Ready 🟢")
 
 # Initialize Chat Engine in Session State (with Preloading)
 if "chat_engine" not in st.session_state:
