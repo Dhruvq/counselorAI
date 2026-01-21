@@ -46,6 +46,11 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
+        if "sources" in message:
+            with st.expander("View Sources"):
+                for source in message["sources"]:
+                    st.markdown(f"**{source['file']}** (Page {source['page']}) - *Similarity: {source['score']}*")
+                    st.caption(source['preview'])
 
 # User Input
 if prompt := st.chat_input("Ask a question (e.g., 'How many units do I need to graduate as a MSEE student?')"):
@@ -60,5 +65,23 @@ if prompt := st.chat_input("Ask a question (e.g., 'How many units do I need to g
             response = st.session_state.chat_engine.chat(prompt)
             st.markdown(response.response)
             
+            # Process and display sources
+            sources_data = []
+            if response.source_nodes:
+                with st.expander("View Sources"):
+                    for node in response.source_nodes:
+                        file_name = node.metadata.get("file_name", "Unknown Document")
+                        page_label = node.metadata.get("page_label", "N/A")
+                        score = f"{node.score:.2f}" if node.score is not None else "N/A"
+                        preview = node.get_content()[:200] + "..."
+                        
+                        st.markdown(f"**{file_name}** (Page {page_label}) - *Similarity: {score}*")
+                        st.caption(preview)
+                        
+                        sources_data.append({"file": file_name, "page": page_label, "score": score, "preview": preview})
+            
     # 3. Add assistant message to history
-    st.session_state.messages.append({"role": "assistant", "content": response.response})
+    message_data = {"role": "assistant", "content": response.response}
+    if sources_data:
+        message_data["sources"] = sources_data
+    st.session_state.messages.append(message_data)
