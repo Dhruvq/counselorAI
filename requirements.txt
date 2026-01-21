@@ -7,3 +7,4 @@ pypdf
 streamlit
 torch
 sentence-transformers
+llama-index-retrievers-bm25

@@ -124,3 +124,5 @@ streamlit run src/app.py
 * [x] **Hybrid Search:** Implement keyword search alongside vector search for better acronym recognition (e.g., "EE 483").
 
 * [ ] **Citations:** Update UI to display the specific page number of the source PDF used for the answer. 
+
+* [ ] **Final end to end test:** Rerun the whole project top to bottom, check edge cases, get feedback from potential users and implement finishing touches in order to finalize the project.
