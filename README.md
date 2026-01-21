@@ -6,7 +6,7 @@
 [![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black)](https://ollama.com/)
  
 
-**CounselorAI** is a local, privacy-focused Retrieval-Augmented Generation (RAG) agent intially designed to assist USC Electrical Engineering (MSEE) students. It answers questions regarding degree requirements, course planning, and academic policies by strictly grounding responses in official university documentation.
+**CounselorAI** is a local, privacy-focused Retrieval-Augmented Generation (RAG) agent designed to assist USC's Electrical and Computer Engineering (MS ECE) students. It answers questions regarding degree requirements, course planning, and academic policies by strictly grounding responses in official university documentation.
 
 > **Note:** At the current stage this project runs 100% locally. No data is sent to external APIs (OpenAI/Anthropic), ensuring student privacy and zero inference costs.
 
@@ -23,7 +23,7 @@
 
 The system follows a standard RAG pipeline architecture:
 
-1.  **Ingestion:** PDF documents are loaded, chunked, and embedded using `BAAI/bge-small-en`.
+1.  **Ingestion:** PDF documents are loaded, chunked, and embedded using `BAAI/bge-small-en-v1.5`.
 2.  **Storage:** Embeddings are stored locally in `ChromaDB`.
 3.  **Retrieval:** User queries are matched against the vector store to retrieve the top-k relevant context nodes.
 4.  **Synthesis:** The retrieved context + user query are sent to a local LLM (**Llama 3.2**) via **Ollama** to generate the final response.
@@ -32,7 +32,7 @@ The system follows a standard RAG pipeline architecture:
 
 ```text
 counselorAI/
-├── data/                    # USC PDF handbooks here(More need to be added)
+├── data/                    # USC PDF handbooks here
 ├── src/
 │   ├── app.py               # Streamlit Frontend UI
 │   ├── ingestion.py         # ETL Pipeline: Reads PDFs -> Updates Vector DB
@@ -50,7 +50,7 @@ counselorAI/
 * **[Ollama](https://ollama.com/)** (Required for local inference)
 
 ## Option 1: Docker Config (Recommended)
-> **Note:** If you wish to add additional pdf files for the model to use as trusted sources of information, skip to **Option 2** since the ingestion pipeline will need to be rerun.
+> **Note:** If you wish to add additional pdf files for the model to use as trusted sources of information, skip to **Option 2** to run the ingestion pipeline manually.
 ### 1. Setup Docker
 * **Download:** Install [Docker Desktop](https://www.docker.com/) and sign in to your account.
 * **Configure Resources:** To ensure the AI performs optimally, increase your memory allocation:
@@ -105,28 +105,30 @@ python src/ingestion.py
 streamlit run src/app.py
 ```
 
-## Future Roadmap
+## Roadmap to how the project was built:
 
-* [x] **Initial proof of concept:** Creating a Local Retrieval-Augmented Generation (RAG) agent pipeline where the flow of **Ingestion**, **Storage**, **Retrieval**  and **Synthesis** is followed and displayed on a basic UI. Accuracy in this stage in **NOT** a concern only that the pipeline behaves as expected.
+* [x] **Initial proof of concept:** Created a Local Retrieval-Augmented Generation (RAG) agent pipeline where the flow of **Ingestion**, **Storage**, **Retrieval**  and **Synthesis** is followed and displayed on a basic UI. Accuracy in this stage was **NOT** a concern, only that the pipeline behaved as expected.
 
-* [x] **Add a 'preload' step:** By sending a dummy request to the model before actually letting the user make a request, it give the model time to load into the computer's RAM leading to less timeouts and a smoother user experience.
+* [x] **Add a 'preload' step:** Added a dummy request to the model before letting the user make a request. This gave the model time to load into the computer's RAM, leading to fewer timeouts and a smoother user experience.
 
-* [x] **Supply initial refined data:** This smaller batch of data will help test the system to ensure usability and relevance to users in a more confined manner before expanding to more comprehensive data.
+* [x] **Supply initial refined data:** Supplied a smaller batch of data to help test the system and ensure usability and relevance to users in a more confined manner before expanding to more comprehensive data.
 
-* [x] **Dockerization:** Fully containerize the Streamlit app and ChromaDB for one-command deployment.
+* [x] **Dockerization:** Fully containerized the Streamlit app and ChromaDB for one-command deployment.
 
-* [x] **Accuracy calibration:** Setting a low temperature(less creative, more encyclopedic knowledge), prompt engineering and other strategies can be implemented to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
+* [x] **Accuracy calibration:** Set a low temperature (less creative, more encyclopedic knowledge) and implemented prompt engineering strategies to improve accuracy within the bounds of the fairly simple llama3.2(~3B) model.
 
-* [x] **Add more relevant Data:** For the best results we must provide as much relevant data in the initial stage of the RAG pipeline, this will help the system be as useful as possible to MSEE students and increase the chances that a potential question can be answer without the user having themselves having to add sources of data.
+* [x] **Add more relevant Data:** Provided as much relevant data as possible in the initial stage of the RAG pipeline. This helped the system be as useful as possible to MS ECE students and increased the chances that a potential question could be answered without the user having to add sources of data.
 
-* [x] **Improve accuracy on the larger data set:** Ensure that the larger dataset does not mess with the model's ability to retrive relevant information. Further, more advanced techniques(eg. adding a Re-ranking step which would use a Cross-Encoder to rank the revelant sources of information and only passing the top-k to the LLM) can be used to try and improve the model's accuracy. This needs to be done while keeping in mind that the systems is designed to run on a local machine, which caps how compute hungry the techniques can be.
+* [x] **Improve accuracy on the larger data set:** Ensured that the larger dataset did not mess with the model's ability to retrieve relevant information. Furthermore, used advanced techniques (e.g., adding a Re-ranking step using a Cross-Encoder to rank relevant sources and only passing the top-k to the LLM) to improve the model's accuracy. This was done while keeping in mind that the system is designed to run on a local machine, which caps how compute-hungry the techniques can be.
 
-* [x] **Hybrid Search:** Implement keyword search alongside vector search for better acronym recognition (e.g., "EE 483"). For this, I combined the existing Vector Search (semantic understanding) with Keyword Search (BM25). This is allows the system to retrive specific course codes (e.g., "EE 559") or acronyms that vector embeddings sometimes miss. These were the exact steps:
+* [x] **Hybrid Search:** Implemented keyword search alongside vector search for better acronym recognition (e.g., "EE 483"). For this, I combined the existing Vector Search (semantic understanding) with Keyword Search (BM25). This allowed the system to retrieve specific course codes (e.g., "EE 559") or acronyms that vector embeddings sometimes miss. These were the exact steps:
     * Fetched the text from ChromaDB at startup.
     * Built an in-memory BM25 index (Keyword Retriever).
     * Fused the Vector Retriever and BM25 Retriever using Reciprocal Rank Fusion (RRF).
 
 
-* [x] **Citations:** Update UI to display the specific page number of the source PDF used for the answer. 
+* [x] **Citations:** Updated UI to display the specific page number of the source PDF used for the answer. 
 
-* [ ] **Final end to end test:** Rerun the whole project top to bottom, check edge cases, get feedback from potential users and implement finishing touches in order to finalize the project.
+* [x] **Optimization:** I optimized the retrieval and inference pipeline by reducing the similarity search top_k from 30 to 20 for better efficiency, updated the RAG engine to automatically recreate the Chroma database when it is empty, adding a startup check to detect GPU availability, and improving the warm-up stage so it only runs the LLM instead of the full top_k pipeline, reducing unnecessary overhead and startup compute time.
+
+* [x] **Final end to end test:** Added a 'Reset Conversation' button for better testing. Reran the whole project top to bottom, checked for edge cases, got feedback from potential users and implement finishing touches in order to finalize the project.

@@ -1,5 +1,6 @@
 import os
 import requests
+import torch
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageContext, Settings
 from llama_index.core.schema import TextNode
 from llama_index.core.retrievers import QueryFusionRetriever
@@ -13,6 +14,7 @@ import chromadb
 
 # Configuration
 CHROMA_DB_DIR = "./chroma_db"
+DATA_DIR = "./data"
 COLLECTION_NAME = "usc_msee_docs"
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 LLM_MODEL = "llama3.2"  
@@ -21,11 +23,11 @@ def load_index():
     """
     Loads the pre-built vector index from disk.
     """
-    if not os.path.exists(CHROMA_DB_DIR):
-        raise ValueError(f"Vector DB not found at {CHROMA_DB_DIR}. Run ingestion.py first.")
+    # Detect hardware acceleration (MPS for Mac, CUDA for Nvidia, else CPU)
+    device_type = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
 
     # 1. Setup Embedding Model (Must match ingestion!)
-    embed_model = HuggingFaceEmbedding(model_name=EMBEDDING_MODEL)
+    embed_model = HuggingFaceEmbedding(model_name=EMBEDDING_MODEL, device=device_type)
     Settings.embed_model = embed_model
 
     # 2. Setup LLM (Ollama)
@@ -60,16 +62,29 @@ def load_index():
     
     # 4. Load Index
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
-    index = VectorStoreIndex.from_vector_store(
-        vector_store,
-        storage_context=storage_context,
+    
+    # Auto-build index if empty (Robustness fix for fresh deployments)
+    if chroma_collection.count() == 0:
+        print("Vector DB is empty. Attempting to ingest data from ./data...")
+        if os.path.exists(DATA_DIR):
+            documents = SimpleDirectoryReader(DATA_DIR).load_data()
+            if documents:
+                return VectorStoreIndex.from_documents(documents, storage_context=storage_context)
+        
+        # If we reach here, no data found
+        raise ValueError("Vector DB is empty and no data found in ./data.")
+        
+    return VectorStoreIndex.from_vector_store(
+        vector_store, storage_context=storage_context
     )
-    return index
 
 def get_chat_engine():
     """
     Creates the chat engine with strict system prompts.
     """
+    # Detect hardware acceleration again for the re-ranker
+    device_type = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
+    
     index = load_index()
     
     # Custom System Prompt to enforce "Implacable Retrieval"
@@ -86,22 +101,23 @@ def get_chat_engine():
         "Keep answers professional and concise."
     )
     
-    # Re-ranker: Re-scores top 30 retrieved nodes to find the best 7
+    # Re-ranker: Re-scores top 20 retrieved nodes to find the best 7
     reranker = SentenceTransformerRerank(
         model="cross-encoder/ms-marco-MiniLM-L-6-v2", 
-        top_n=7
+        top_n=7,
+        device=device_type
     )
     
     # --- Hybrid Search Setup ---
     # 1. Create Vector Retriever
-    vector_retriever = index.as_retriever(similarity_top_k=30)
+    vector_retriever = index.as_retriever(similarity_top_k=20)
     
     # 2. Create BM25 (Keyword) Retriever
     # We fetch all documents from Chroma to build the keyword index in memory.
     # This ensures we can find exact matches like "EE 483" that vectors might miss.
     db = chromadb.PersistentClient(path=CHROMA_DB_DIR)
     collection = db.get_collection(COLLECTION_NAME)
-    data = collection.get() # Fetch all docs
+    data = collection.get(include=["documents", "metadatas"]) # Fetch only text/meta, skip heavy embeddings
     
     nodes = []
     if data and data['documents']:
@@ -109,13 +125,13 @@ def get_chat_engine():
         for id, text, meta in zip(data['ids'], data['documents'], metadatas):
             nodes.append(TextNode(id_=id, text=text, metadata=meta))
             
-    bm25_retriever = BM25Retriever.from_defaults(nodes=nodes, similarity_top_k=30)
+    bm25_retriever = BM25Retriever.from_defaults(nodes=nodes, similarity_top_k=20)
     
     # 3. Fuse Retrievers (Hybrid)
     # Combines results from both Vector and Keyword search using Reciprocal Rank Fusion
     fusion_retriever = QueryFusionRetriever(
         [vector_retriever, bm25_retriever],
-        similarity_top_k=30, # Total candidates to pass to the re-ranker
+        similarity_top_k=20, # Total candidates to pass to the re-ranker
         num_queries=1,       # Use the original query (faster than generating variations)
         mode="reciprocal_rerank",
         use_async=False,
