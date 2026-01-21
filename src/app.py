@@ -1,4 +1,5 @@
 import streamlit as st
+from llama_index.core import Settings
 from rag_engine import get_chat_engine
 
 # Page Config
@@ -37,7 +38,7 @@ if "chat_engine" not in st.session_state:
             # We send a dummy message to force the heavy LLM to load into RAM now
             # instead of waiting for the user's first input.
             st.write("Warming up AI Model (this prevents timeouts)...")
-            chat_engine.chat("Just say hello.") 
+            Settings.llm.complete("Just say hello.")
             
             # Step 3: Save to session state
             st.session_state.chat_engine = chat_engine
