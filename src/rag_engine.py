@@ -105,7 +105,8 @@ def get_chat_engine():
     
     nodes = []
     if data and data['documents']:
-        for id, text, meta in zip(data['ids'], data['documents'], data['metadatas']):
+        metadatas = data['metadatas'] if data['metadatas'] else [{}] * len(data['ids'])
+        for id, text, meta in zip(data['ids'], data['documents'], metadatas):
             nodes.append(TextNode(id_=id, text=text, metadata=meta))
             
     bm25_retriever = BM25Retriever.from_defaults(nodes=nodes, similarity_top_k=30)
