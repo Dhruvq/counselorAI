@@ -1,10 +1,14 @@
 import os
 import requests
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageContext, Settings
+from llama_index.core.schema import TextNode
+from llama_index.core.retrievers import QueryFusionRetriever
+from llama_index.core.chat_engine import ContextChatEngine
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
 from llama_index.core.postprocessor import SentenceTransformerRerank
+from llama_index.retrievers.bm25 import BM25Retriever
 import chromadb
 
 # Configuration
@@ -87,11 +91,40 @@ def get_chat_engine():
         model="cross-encoder/ms-marco-MiniLM-L-6-v2", 
         top_n=7
     )
+    
+    # --- Hybrid Search Setup ---
+    # 1. Create Vector Retriever
+    vector_retriever = index.as_retriever(similarity_top_k=30)
+    
+    # 2. Create BM25 (Keyword) Retriever
+    # We fetch all documents from Chroma to build the keyword index in memory.
+    # This ensures we can find exact matches like "EE 483" that vectors might miss.
+    db = chromadb.PersistentClient(path=CHROMA_DB_DIR)
+    collection = db.get_collection(COLLECTION_NAME)
+    data = collection.get() # Fetch all docs
+    
+    nodes = []
+    if data and data['documents']:
+        metadatas = data['metadatas'] if data['metadatas'] else [{}] * len(data['ids'])
+        for id, text, meta in zip(data['ids'], data['documents'], metadatas):
+            nodes.append(TextNode(id_=id, text=text, metadata=meta))
+            
+    bm25_retriever = BM25Retriever.from_defaults(nodes=nodes, similarity_top_k=30)
+    
+    # 3. Fuse Retrievers (Hybrid)
+    # Combines results from both Vector and Keyword search using Reciprocal Rank Fusion
+    fusion_retriever = QueryFusionRetriever(
+        [vector_retriever, bm25_retriever],
+        similarity_top_k=30, # Total candidates to pass to the re-ranker
+        num_queries=1,       # Use the original query (faster than generating variations)
+        mode="reciprocal_rerank",
+        use_async=False,
+        verbose=True
+    )
 
-    return index.as_chat_engine(
-        chat_mode="context", 
+    return ContextChatEngine.from_defaults(
+        retriever=fusion_retriever,
         system_prompt=custom_prompt,
-        similarity_top_k=30, # Fetch a much wider pool to improve recall on larger datasets
         node_postprocessors=[reranker], # Filter them down to the best 7
         verbose=True
     )
