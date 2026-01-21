@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 from rag_engine import get_chat_engine
 
 # Page Config
