@@ -1,5 +1,6 @@
 import os
 import requests
+import torch
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageContext, Settings
 from llama_index.core.schema import TextNode
 from llama_index.core.retrievers import QueryFusionRetriever
@@ -22,9 +23,11 @@ def load_index():
     """
     Loads the pre-built vector index from disk.
     """
+    # Detect hardware acceleration (MPS for Mac, CUDA for Nvidia, else CPU)
+    device_type = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
 
     # 1. Setup Embedding Model (Must match ingestion!)
-    embed_model = HuggingFaceEmbedding(model_name=EMBEDDING_MODEL)
+    embed_model = HuggingFaceEmbedding(model_name=EMBEDDING_MODEL, device=device_type)
     Settings.embed_model = embed_model
 
     # 2. Setup LLM (Ollama)
@@ -79,6 +82,9 @@ def get_chat_engine():
     """
     Creates the chat engine with strict system prompts.
     """
+    # Detect hardware acceleration again for the re-ranker
+    device_type = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
+    
     index = load_index()
     
     # Custom System Prompt to enforce "Implacable Retrieval"
@@ -98,7 +104,8 @@ def get_chat_engine():
     # Re-ranker: Re-scores top 20 retrieved nodes to find the best 7
     reranker = SentenceTransformerRerank(
         model="cross-encoder/ms-marco-MiniLM-L-6-v2", 
-        top_n=7
+        top_n=7,
+        device=device_type
     )
     
     # --- Hybrid Search Setup ---
@@ -110,7 +117,7 @@ def get_chat_engine():
     # This ensures we can find exact matches like "EE 483" that vectors might miss.
     db = chromadb.PersistentClient(path=CHROMA_DB_DIR)
     collection = db.get_collection(COLLECTION_NAME)
-    data = collection.get() # Fetch all docs
+    data = collection.get(include=["documents", "metadatas"]) # Fetch only text/meta, skip heavy embeddings
     
     nodes = []
     if data and data['documents']:
