@@ -6,7 +6,7 @@
 [![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black)](https://ollama.com/)
  
 
-**CounselorAI** is a local, privacy-focused Retrieval-Augmented Generation (RAG) agent intially designed to assist USC Electrical Engineering (MSEE) students. It answers questions regarding degree requirements, course planning, and academic policies by strictly grounding responses in official university documentation.
+**CounselorAI** is a local, privacy-focused Retrieval-Augmented Generation (RAG) agent initially designed to assist USC Electrical Engineering (MSEE) students. It answers questions regarding degree requirements, course planning, and academic policies by strictly grounding responses in official university documentation.
 
 > **Note:** At the current stage this project runs 100% locally. No data is sent to external APIs (OpenAI/Anthropic), ensuring student privacy and zero inference costs.
 
@@ -119,9 +119,9 @@ streamlit run src/app.py
 
 * [x] **Add more relevant Data:** For the best results we must provide as much relevant data in the initial stage of the RAG pipeline, this will help the system be as useful as possible to MSEE students and increase the chances that a potential question can be answer without the user having themselves having to add sources of data.
 
-* [x] **Improve accuracy on the larger data set:** Ensure that the larger dataset does not mess with the model's ability to retrive relevant information. Further, more advanced techniques(eg. adding a Re-ranking step which would use a Cross-Encoder to rank the revelant sources of information and only passing the top-k to the LLM) can be used to try and improve the model's accuracy. This needs to be done while keeping in mind that the systems is designed to run on a local machine, which caps how compute hungry the techniques can be.
+* [x] **Improve accuracy on the larger data set:** Ensure that the larger dataset does not mess with the model's ability to retrieve relevant information. Further, more advanced techniques(eg. adding a Re-ranking step which would use a Cross-Encoder to rank the relevant sources of information and only passing the top-k to the LLM) can be used to try and improve the model's accuracy. This needs to be done while keeping in mind that the systems is designed to run on a local machine, which caps how compute hungry the techniques can be.
 
-* [x] **Hybrid Search:** Implement keyword search alongside vector search for better acronym recognition (e.g., "EE 483"). For this, I combined the existing Vector Search (semantic understanding) with Keyword Search (BM25). This is allows the system to retrive specific course codes (e.g., "EE 559") or acronyms that vector embeddings sometimes miss. These were the exact steps:
+* [x] **Hybrid Search:** Implement keyword search alongside vector search for better acronym recognition (e.g., "EE 483"). For this, I combined the existing Vector Search (semantic understanding) with Keyword Search (BM25). This allows the system to retrieve specific course codes (e.g., "EE 559") or acronyms that vector embeddings sometimes miss. These were the exact steps:
     * Fetched the text from ChromaDB at startup.
     * Built an in-memory BM25 index (Keyword Retriever).
     * Fused the Vector Retriever and BM25 Retriever using Reciprocal Rank Fusion (RRF).
@@ -129,4 +129,6 @@ streamlit run src/app.py
 
 * [x] **Citations:** Update UI to display the specific page number of the source PDF used for the answer. 
 
-* [x] **Final end to end test:** Rerun the whole project top to bottom, check edge cases, get feedback from potential users and implement finishing touches in order to finalize the project.
+* [x] **Optimization:** I optimized the retrieval and inference pipeline by reducing the similarity search top_k from 30 to 20 for better efficiency, updated the RAG engine to automatically recreate the Chroma database when it is empty, adding a startup check to detect GPU availability, and improving the warm-up stage so it only runs the LLM instead of the full top_k pipeline, reducing unnecessary overhead and startup compute time.
+
+* [x] **Final end to end test:** Added a 'Reset Conversation' button for better testing. Reran the whole project top to bottom, checked for edge cases, got feedback from potential users and implement finishing touches in order to finalize the project.
