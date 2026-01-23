@@ -104,6 +104,8 @@ python src/ingestion.py
 ```bash
 streamlit run src/app.py
 ```
+## Preview:
+<img width="735" height="362.5" alt="Screenshot 2026-01-22 at 10 02 03 PM" src="https://github.com/user-attachments/assets/14a54409-4af8-4b00-b24c-1ff19e14d501" />
 
 ## Roadmap to how the project was built:
 
